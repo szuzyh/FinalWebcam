@@ -1,10 +1,17 @@
 
 import com.github.sarxos.webcam.*;
+import com.ibm.media.codec.audio.BufferedEncoder;
 import com.xuggle.mediatool.IMediaWriter;
+import com.xuggle.mediatool.ToolFactory;
+import com.xuggle.xuggler.ICodec;
+import com.xuggle.xuggler.IContainer;
 import com.xuggle.xuggler.IMediaDataWrapper;
+import com.xuggle.xuggler.video.ConverterFactory;
 import org.eclipse.jetty.security.Authenticator;
 import uk.co.caprica.vlcj.medialist.MediaListItem;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
@@ -23,11 +30,18 @@ public class TestFFmpeg {
         mediaListItemList.add(new MediaListItem(name1,rtsp1,new ArrayList<MediaListItem>()));
         Webcam.setDriver(new VlcjDriver(mediaListItemList));
 
-        WebcamStreamer webcamStreamer=new WebcamStreamer(554,Webcam.getDefault(),10,true);
-        do {
-            Thread.sleep(1000);
+        File file = new File("E:\\output.mp4");
+        IMediaWriter writer = ToolFactory.makeWriter(file.getName());
+        Dimension size = WebcamResolution.QVGA.getSize();
 
-        }while (true);
+        writer.addVideoStream(0, 0, ICodec.ID.CODEC_ID_H264, size.width, size.height);
+
+        final Webcam webcam=Webcam.getDefault();
+        webcam.setViewSize(size);
+        webcam.open(true);
+        final WebcamStreamer webcamStreamer=new WebcamStreamer(554,Webcam.getDefault(),10,true);
+        IContainer container=IContainer.make();
+
 
 
 

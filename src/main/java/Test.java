@@ -6,6 +6,7 @@ import com.github.sarxos.webcam.WebcamResolution;
 import com.github.sarxos.webcam.WebcamStreamer;
 
 
+import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 import com.xuggle.mediatool.IMediaWriter;
 import com.xuggle.mediatool.ToolFactory;
 import com.xuggle.xuggler.ICodec;
@@ -13,14 +14,17 @@ import com.xuggle.xuggler.IPixelFormat;
 import com.xuggle.xuggler.IVideoPicture;
 import com.xuggle.xuggler.video.ConverterFactory;
 import com.xuggle.xuggler.video.IConverter;
+import it.sauronsoftware.jave.Encoder;
+import it.sauronsoftware.jave.MultimediaInfo;
 import uk.co.caprica.vlcj.medialist.MediaListItem;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.zip.InflaterInputStream;
 
 /**
  * Created by Leo on 2016/11/23.
@@ -29,48 +33,41 @@ public class Test {
 
 
     public static void main(String args[]) throws Throwable {
-        String name1 = "ace";
-        //String rtsp1 = "rtsp://admin:12345@192.168.2.68:554/h264/ch1/main/av_stream";
-        String rtsp1 = "rtsp://admin:12345@192.168.2.68:554/h264/ch1/main/av_stream";
-        List<MediaListItem> mediaListItemList=new ArrayList<MediaListItem>();
-        mediaListItemList.add(new MediaListItem(name1,rtsp1,new ArrayList<MediaListItem>()));
-        Webcam.setDriver(new VlcjDriver(mediaListItemList));
+        new InitWebcam();
+        String path0="0";
+        String path1="1";
+        new CreateVideo(path0);
+        new CreateVideo(path1);
 
-     //   WebcamStreamer webcamStreamer=new WebcamStreamer(554,Webcam.getDefault(),10,true);
+        new Change(path0);
+        new Change(path1);
+//        int finalVideoId=0;
+//        long time=1;
+//        long Time=0;
+//        for (int i=0;i<2;i++){
+//            String I=i+"";
+//            new CreateVideo(I);
+//            String filePath="E:\\output"+I+".avi";
+//              Time+=JaveTestForTime(filePath);
+//            if ((Time/60000)>=time){
+//                finalVideoId=i;
+//                break;
+//            }
+//        }
 
-        File file = new File("E:\\output.mp4");
-        IMediaWriter writer = ToolFactory.makeWriter(file.getName());
-        Dimension size = new Dimension();
-        size.setSize(1430,1430);
+    }
 
-        writer.addVideoStream(0, 0, ICodec.ID.CODEC_ID_H264, size.width, size.height);
-
-        Webcam webcam = Webcam.getDefault();
-        webcam.setViewSize(size);
-        webcam.open(true);
-
-
-        long start = System.currentTimeMillis();
-
-        for (int i = 0; i < 50; i++) {
-
-            System.out.println("Capture frame " + i);
-
-            BufferedImage image = ConverterFactory.convertToType(webcam.getImage(), BufferedImage.TYPE_3BYTE_BGR);
-            IConverter converter = ConverterFactory.createConverter(image, IPixelFormat.Type.YUV420P);
-//
-           IVideoPicture frame = converter.toPicture(image, (System.currentTimeMillis() - start) * 1000);
-            frame.setKeyFrame(i == 0);
-            frame.setQuality(0);
-
-            writer.encodeVideo(0,frame);
-
-            // 10 FPS
-            Thread.sleep(100);
+    public static long JaveTestForTime(String path) {
+        File source= new File(path);
+        Encoder encoder = new Encoder();
+        try {
+            MultimediaInfo m = encoder.getInfo(source);
+            long ls = m.getDuration();
+            System.out.println("此视频时长为:"+ls/60000+"分"+(ls)/1000+"秒！");
+            return ls;
+        } catch(Exception e) {
+            e.printStackTrace();
+            return Long.parseLong(null);
         }
-
-        writer.close();
-
-        System.out.println("Video recorded in file: " + file.getAbsolutePath());
     }
 }

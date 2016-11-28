@@ -35,5 +35,8 @@
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-server:9.2.3.v20140905" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty:jetty-http:9.2.3.v20140905" level="project" />
     <orderEntry type="library" name="xuggle-xuggler-5.4 " level="project" />
+    <orderEntry type="library" name="jave-1.0.2" level="project" />
+    <orderEntry type="library" name="jffmpeg-1.1.0" level="project" />
+    <orderEntry type="library" name="isoviewer-1.0-RC-35" level="project" />
   </component>
 </module>
